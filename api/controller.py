@@ -62,14 +62,16 @@ def save_rewards():
     try:
         save_request = request.get_json()
         total_score = 0
-        for t in list(save_request):
-            if t in ['vendor_id', 'user_id']:
-                continue
+        for t in list(['cup','cutlery', 'container']):
+            # if t in ['vendor_id', 'user_id']:
+            #     continue
             req = save_request
             common_obj = Common(20)
             req['date'] = datetime.datetime.now()
             req['uuid'] = common_obj.generate_uuid()
-            req['points'] = req[t]
+            req['points'] = 3000
+            if t == 'container':
+                req['points'] = 9910
             req['type'] = t
             r = Reward(req)
             r.save_data()
@@ -100,19 +102,45 @@ def get_user_timeline():
         req = request.get_json()
         r = Reward(req)
         records = r.get_reward_details()
-        response = dict()
+        response = {
+            "cup": 0,
+            "bag": 0,
+            "container": 0,
+            "cutlery": 0
+        }
         if records is None:
             return
         for r in records:
-            if r.type in response :
-                response[r.type] += r.points
-            else:
-                response[r.type] = r.points
+            response[r.type] = response[r.type] + r.points
+        #     if r.type in response :
+        #         response[r.type] += r.points
+        #     else:
+        #         response[r.type] = r.points
             # record = {"type": r.type, "points": r.points}
         return jsonify(status=200, body=response)
     except Exception as e:
         print(e)
         return jsonify(status='400', body="faliure")
+
+# def get_user_timeline():
+#     try:
+#         req = request.get_json()
+#         r = Reward(req)
+#         records = r.get_reward_details()
+#         response = dict()
+#         if records is None:
+#             return
+#         for r in records:
+#             response.update({r[0]: r[1]})
+#         #     if r.type in response :
+#         #         response[r.type] += r.points
+#         #     else:
+#         #         response[r.type] = r.points
+#             # record = {"type": r.type, "points": r.points}
+#         return jsonify(status=200, body=response)
+#     except Exception as e:
+#         print(e)
+#         return jsonify(status='400', body="faliure")
 @app.route('/redeem', methods=['POST'])
 def redeem_rewards():
     try:

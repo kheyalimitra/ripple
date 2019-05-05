@@ -24,7 +24,12 @@ class Reward:
     def save_data(self):
         session = Session()
         try:
+            # record = session.query(Reward).filter_by(user_id=self.user_id, vendor_id=self.vendor_id, type=self.type).first()
+            # if record is None:
             session.add(self)
+            # # else:
+            #     session.query(Reward).filter_by(user_id=self.user_id, vendor_id=self.vendor_id, type=self.type).]]update()
+            # #     session.update(Reward).where(user_id=self.user_id, vendor_id=self.vendor_id, type=self.type).values(points=self.points)
             session.commit()
         except:
             session.rollback()
@@ -36,7 +41,8 @@ class Reward:
         session = Session()
         records = None
         try:
-            records = session.query(Reward.type,Reward.points).filter_by(user_id=self.user_id).group_by(self.type, self.points).all()
+            # records = session.query(Reward.type,func.sum(Reward.points)).filter_by(user_id=self.user_id).group_by(Reward.type).all()
+            records = session.query(Reward).filter_by(user_id=self.user_id).all()
             if records is None:
                     return None
         except:
