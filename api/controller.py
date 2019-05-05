@@ -73,6 +73,7 @@ def save_rewards():
             req['type'] = t
             r = Reward(req)
             r.save_data()
+            total_score += req[t]
 
         upm = UserPointMapper(req['user_id'], common_obj.generate_uuid(), total_score)
         upm.save_data()
