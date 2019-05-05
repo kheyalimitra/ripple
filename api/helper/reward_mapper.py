@@ -36,7 +36,7 @@ class Reward:
         session = Session()
         records = None
         try:
-            records = session.query(Reward.type,func.sum(Reward.points).label('points')).filter_by(user_id=self.user_id).group_by(self.type).all()
+            records = session.query(Reward.type,Reward.points).filter_by(user_id=self.user_id).group_by(self.type, self.points).all()
             if records is None:
                     return None
         except:
